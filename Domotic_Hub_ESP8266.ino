@@ -3,7 +3,7 @@
   Complete project details at http://randomnerdtutorials.com  
 *********/
 // Load Configuration file
-#include <Config.h>
+#include "Config.h"
 
 // Load Wi-Fi library
 #include <ESP8266WiFi.h>
