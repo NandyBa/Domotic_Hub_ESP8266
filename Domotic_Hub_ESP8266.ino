@@ -5,10 +5,14 @@
 // Load Configuration file
 #include "Config.h"
 
+// Load library to fash files to the ESP8266 (html, css, js)
+#include "FS.h"
+
 // Load Wi-Fi library
 #include <ESP8266WiFi.h>
 #include <ESP8266HTTPClient.h>
-#include <ESP8266WebServer.h>
+#include <ESPAsyncTCP.h>
+#include <ESPAsyncWebServer.h>
 
 // NETWORK: Static IP details
 IPAddress ip(192, 168, 1, 43);
@@ -16,59 +20,14 @@ IPAddress gateway(192, 168, 1, 1);
 IPAddress subnet(255, 255, 255, 0);
 
 
-ESP8266WebServer server;
+// Create AsyncWebServer object on port 80
+AsyncWebServer server(80);
 
 // Variable to store the HTTP request
 String header;
 String state[6] {"off","off","off","off","off","off"};
+String commande[6] {"off","off","off","off","off","off"};
 String objectName[6] = {"","","Bureau","Lit","Lampe d'appoint","Salon"};
-
-char webpage[] PROGMEM = R"=====(
-<html>
-<head>
-</head>
-<body>
-<style type="text/css">
-.button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;}
-</style>
-<p> LED Status: <span id="state-1">__</span> </p>
-<button onclick="OnOffLight(3)" class="button"> Bureau </button>
-<p> LED Status: <span id="state-2">__</span> </p>
-<button onclick="OnOffLight(4)" class="button"> Lampe lit </button>
-<p> LED Status: <span id="state-3">__</span> </p>
-<button onclick="OnOffLight(5)" class="button"> Lampe office </button>
-<p> LED Status: <span id="state-4">__</span> </p>
-<button onclick="OnOffLight(6)" class="button"> Salon </button>
-</body>
-<script>
-var xhr = new XMLHttpRequest();
-var url = "states";
-xhr.onreadystatechange = function() {
-  if (this.readyState == 4 && this.status == 200) { states = this.responseText.split(";");
-    for(i=3;i<=6;i++){
-      document.getElementById("state-"+(i-2)).innerHTML = states[i-3];
-    }
-  }
-};
-xhr.open("GET", url, true);
-xhr.send();
-
-function OnOffLight(i)
-{
-  var xhr = new XMLHttpRequest();
-  var url = "/"+i+"/toggle";
-  xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      state = this.responseText;
-      document.getElementById("state-"+(i-2)).innerHTML = state;
-    }
-  };
-  xhr.open("GET", url, true);
-  xhr.send();
-};
-</script>
-</html>
-)=====";
 
 
 void setup() {
@@ -89,22 +48,33 @@ void setup() {
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 
-  server.on("/",[](){server.send_P(200,"text/html", webpage);});
-  server.on("/3/toggle", toggle3);
-  server.on("/4/toggle", toggle4);
-  server.on("/5/toggle", toggle5);
-  server.on("/6/toggle", toggle6);
-  server.on("/states", [state](){
-    String chr = "";
-    for(int i = 3; i<= 6; i++){
-      chr += state[i-1]+";";
-    }
-    server.send(200,"text/plain", chr);
-  });
-  for(int i = 3; i<= 6; i++){
-    server.on("/"+String(i)+"/state", [i, state](){server.send(200,"text/plain", state[i]);});
+  if(!SPIFFS.begin()){
+    Serial.println("An Error has occurred while mounting SPIFFS");
+    return;
+  }else{
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/index.html", "text/html");
+    });
+    server.on("/index.js", HTTP_GET, [](AsyncWebServerRequest *request){
+      request->send(SPIFFS, "/index.js", "text/javascript");
+    });
   }
-  
+   server.on("/3/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", toggleLight(3).c_str());
+  });
+  server.on("/4/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", toggleLight(4).c_str());
+  });
+  server.on("/5/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", toggleLight(5).c_str());
+  });
+  server.on("/6/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", toggleLight(6).c_str());
+  });
+  server.on("/states", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", getStates().c_str());
+  });
+
   server.begin();
 }
 
@@ -133,29 +103,21 @@ void putRequest(String URI, String data){
   http.end();
 }
 
-void toggle3(){
-  toggleLight(3);
-}
-void toggle4(){
-  toggleLight(4);
-}
-void toggle5(){
-  toggleLight(5);
-}
-void toggle6(){
-  toggleLight(6);
+String toggleLight(int i){
+  if(state[i-1] == "off"){
+    commande[i-1] = "on";
+  }else{
+    commande[i-1] = "off";
+  }
+  return commande[i-1];
 }
 
-void toggleLight(int i){
-  if(state[i-1] == "off"){
-    switchOnLight(i);
-    state[i-1] = "on";
-    server.send(200,"text/plain", "on");
-  }else{
-    switchOffLight(i);
-    state[i-1] = "off";
-    server.send(200,"text/plain", "off");
+String getStates(){
+  String str = "";
+  for(int i = 3; i<= 6; i++){
+    str += state[i-1] + ";";
   }
+  return str;
 }
 
 void switchOnLight(int id){
@@ -179,5 +141,16 @@ void createbutton(WiFiClient client, int id){
 }
 
 void loop(){
-  server.handleClient();
+  for(int i = 3; i <= 6; i++){
+    if(String(commande[i-1]) != String(state[i-1])){
+        if(commande[i-1] == "on"){
+          state[i-1] = "on";
+          switchOnLight(i);
+        }else{
+          state[i-1] = "off";
+          switchOffLight(i);
+        } 
+    }
+
+  }
 }
