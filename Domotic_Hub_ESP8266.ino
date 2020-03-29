@@ -54,7 +54,7 @@ void setup() {
       request->send(SPIFFS, "/index.js", "text/javascript");
     });
   }
-   server.on("/3/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
+  server.on("/3/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", toggleLight(3).c_str());
   });
   server.on("/4/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
@@ -65,6 +65,30 @@ void setup() {
   });
   server.on("/6/toggle", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", toggleLight(6).c_str());
+  });
+  server.on("/3/on", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", SetOnOffLight(3, "on").c_str());
+  });
+  server.on("/4/on", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", SetOnOffLight(4, "on").c_str());
+  });
+  server.on("/5/on", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", SetOnOffLight(5, "on").c_str());
+  });
+  server.on("/6/on", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", SetOnOffLight(6, "on").c_str());
+  });
+  server.on("/3/off", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", SetOnOffLight(3, "off").c_str());
+  });
+  server.on("/4/off", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", SetOnOffLight(4, "off").c_str());
+  });
+  server.on("/5/off", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", SetOnOffLight(5, "off").c_str());
+  });
+  server.on("/6/off", HTTP_GET, [](AsyncWebServerRequest *request){
+    request->send_P(200, "text/plain", SetOnOffLight(6, "off").c_str());
   });
   server.on("/states", HTTP_GET, [](AsyncWebServerRequest *request){
     request->send_P(200, "text/plain", getStates().c_str());
@@ -102,6 +126,15 @@ String toggleLight(int i){
   if(state[i-1] == "off"){
     commande[i-1] = "on";
   }else{
+    commande[i-1] = "off";
+  }
+  return commande[i-1];
+}
+
+String SetOnOffLight(int i, String c){
+  if(c=="on"){
+    commande[i-1] = "on";
+  }else if(c =="off"){
     commande[i-1] = "off";
   }
   return commande[i-1];

@@ -1,25 +1,18 @@
-var xhr = new XMLHttpRequest();
-var url = "states";
-xhr.onreadystatechange = function() {
-  if (this.readyState == 4 && this.status == 200) { states = this.responseText.split(";");
-    for(i=3;i<=6;i++){
-      document.getElementById("state-"+(i-2)).innerHTML = states[i-3];
-    }
-  }
-};
-xhr.open("GET", url, true);
-xhr.send();
+cbx = document.getElementsByClassName("cbx")
+for(i=0;i<cbx.length;i++){
+	cbx[i].onclick = function() {
+		val = this.value;
+		var xhr = new XMLHttpRequest();
+		if(this.checked){
+			//On alume
+			
+			var url = "/"+val+"/on";
+		}else{
+			//On éteint
 
-function OnOffLight(i)
-{
-  var xhr = new XMLHttpRequest();
-  var url = "/"+i+"/toggle";
-  xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      state = this.responseText;
-      document.getElementById("state-"+(i-2)).innerHTML = state;
-    }
-  };
-  xhr.open("GET", url, true);
-  xhr.send();
-};
+			var url = "/"+val+"/off";
+		}
+		xhr.open("GET", url, true);
+		xhr.send();
+	}
+}
