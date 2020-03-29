@@ -5,27 +5,44 @@
 </head>
 <body>
 	<div class="row-interface">
-		<span>Bureau</span>
+		<span class="interface-title">Bureau</span>
 		<input type="checkbox" id="cbx1" class="cbx" style="display:none" value="3" />
 		<label for="cbx1" class="toggle"><span></span></label>
+
+		<div class="slidecontainer">
+		  <input type="range" min="1" max="100" value="50" class="slider" light-id="3">
+		  <span class="value-slider"></span>
+		</div>
 	</div>
 
 	<div class="row-interface">
-		<span>Lampe Lit</span>
+		<span class="interface-title">Lampe Lit</span>
 		<input type="checkbox" id="cbx2" class="cbx" style="display:none" value="4"/>
-		<label for="cbx2" class="toggle"><span></span></label>		
+		<label for="cbx2" class="toggle"><span></span></label>
+		<div class="slidecontainer">
+		  <input type="range" min="1" max="100" value="50" class="slider" light-id="4">
+		  <span class="value-slider"></span>
+		</div>
 	</div>
 
 	<div class="row-interface">
-		<span>Lampe Office</span>
+		<span class="interface-title">Lampe Office</span>
 		<input type="checkbox" id="cbx3" class="cbx" style="display:none" value="5"/>
 		<label for="cbx3" class="toggle"><span></span></label>
+		<div class="slidecontainer">
+		  <input type="range" min="1" max="100" value="50" class="slider" light-id="5">
+		  <span class="value-slider"></span>
+		</div>
 	</div>
 
 	<div class="row-interface">
-		<span>Salon</span>
+		<span class="interface-title">Salon</span>
 		<input type="checkbox" id="cbx4" class="cbx" style="display:none" value="6"/>
 		<label for="cbx4" class="toggle"><span></span></label>
+		<div class="slidecontainer">
+		  <input type="range" min="1" max="100" value="50" class="slider" light-id="6">
+		  <span class="value-slider"></span>
+		</div>
 	</div>
 	<style type="text/css">
 		.row-interface{
@@ -33,78 +50,120 @@
 		}
 		//Interface
 		html, body {
-		  height: 100%;
+			height: 100%;
 		}
 
 		.toggle {
-		  position: relative;
-		  display: block;
-		  width: 40px;
-		  height: 20px;
-		  cursor: pointer;
-		  -webkit-tap-highlight-color: transparent;
-		  transform: translate3d(0, 0, 0);
+			position: relative;
+			display: block;
+			float: left;
+			width: 40px;
+			height: 20px;
+			cursor: pointer;
+			-webkit-tap-highlight-color: transparent;
+			transform: translate3d(0, 0, 0);
 		}
 		.toggle:before {
-		  content: "";
-		  position: relative;
-		  top: 3px;
-		  left: 3px;
-		  width: 34px;
-		  height: 14px;
-		  display: block;
-		  background: #9A9999;
-		  border-radius: 8px;
-		  transition: background 0.2s ease;
+			content: "";
+			position: relative;
+			top: 3px;
+			left: 3px;
+			width: 34px;
+			height: 14px;
+			display: block;
+			background: #9A9999;
+			border-radius: 8px;
+			transition: background 0.2s ease;
 		}
 		.toggle span {
-		  position: absolute;
-		  top: 0;
-		  left: 0;
-		  width: 20px;
-		  height: 20px;
-		  display: block;
-		  background: white;
-		  border-radius: 10px;
-		  box-shadow: 0 3px 8px rgba(154, 153, 153, 0.5);
-		  transition: all 0.2s ease;
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 20px;
+			height: 20px;
+			display: block;
+			background: white;
+			border-radius: 10px;
+			box-shadow: 0 3px 8px rgba(154, 153, 153, 0.5);
+			transition: all 0.2s ease;
 		}
 		.toggle span:before {
-		  content: "";
-		  position: absolute;
-		  display: block;
-		  margin: -18px;
-		  width: 56px;
-		  height: 56px;
-		  background: rgba(79, 46, 220, 0.5);
-		  border-radius: 50%;
-		  transform: scale(0);
-		  opacity: 1;
-		  pointer-events: none;
+			content: "";
+			position: absolute;
+			display: block;
+			margin: -18px;
+			width: 56px;
+			height: 56px;
+			background: rgba(79, 46, 220, 0.5);
+			border-radius: 50%;
+			transform: scale(0);
+			opacity: 1;
+			pointer-events: none;
 		}
 
 		.cbx:checked + .toggle:before {
-		  background: #947ADA;
+			background: #947ADA;
 		}
 		.cbx:checked + .toggle span {
-		  background: #4F2EDC;
-		  transform: translateX(20px);
-		  transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
-		  box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
+			background: #4F2EDC;
+			transform: translateX(20px);
+			transition: all 0.2s cubic-bezier(0.8, 0.4, 0.3, 1.25), background 0.15s ease;
+			box-shadow: 0 3px 8px rgba(79, 46, 220, 0.2);
 		}
 		.cbx:checked + .toggle span:before {
-		  transform: scale(1);
-		  opacity: 0;
-		  transition: all 0.4s ease;
+			transform: scale(1);
+			opacity: 0;
+			transition: all 0.4s ease;
 		}
 
 		.center {
-		  position: absolute;
-		  top: calc(50% - 10px);
-		  left: calc(50% - 20px);
+			position: absolute;
+			top: calc(50% - 10px);
+			left: calc(50% - 20px);
+		}
+		//Slider Bar
+		.slidecontainer {
+		  width: 100%;
 		}
 
+		.slider {
+		  -webkit-appearance: none;
+		  width: 200px;
+		  height: 10px;
+		  border-radius: 5px;
+		  background: #9A9999;
+		  outline: none;
+		  opacity: 0.6;
+		  -webkit-transition: .2s;
+		  transition: opacity .2s;
+		}
+
+		.slider:hover {
+		  opacity: 0.8;
+		}
+
+		.slider::-webkit-slider-thumb {
+		  -webkit-appearance: none;
+		  appearance: none;
+		  width: 15px;
+		  height: 15px;
+		  border-radius: 50%;
+		  background: rgb(79, 46, 220);
+		  cursor: pointer;
+		}
+
+		.slider::-moz-range-thumb {
+		  width: 25px;
+		  height: 25px;
+		  border-radius: 50%;
+		  background: rgb(79, 46, 220);
+		  cursor: pointer;
+		}
+		.interface-title{
+			display: block;
+		}
 	</style>
+	<script src="config.js"></script>
 	<script type="text/javascript" src="index.js"></script>
 </body>
 </html>
