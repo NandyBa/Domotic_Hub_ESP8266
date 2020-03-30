@@ -4,7 +4,6 @@ function ChangePhilipsHueState(data, light_id){
 	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/lights/"+light_id+"/state";
 	xhr.open("PUT", url, true);
 	xhr.send(json);
-	return xhr.status
 }
 
 cbx = document.getElementsByClassName("cbx")
