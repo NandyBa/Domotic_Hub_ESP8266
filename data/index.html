@@ -1,54 +1,73 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
+<meta charset="UTF-8">
 	<title></title>
+
 </head>
 <body>
 	<div class="row">
 		<h2>Lampes</h2>
 		<div class="inferface-item card">
 			<span class="interface-title">Bureau</span>
-			<input type="checkbox" id="cbx1" class="cbx" style="display:none" value="3" />
+			<input type="checkbox" id="cbx1" class="cbx" style="display:none" light-id="3" />
 			<label for="cbx1" class="toggle"><span></span></label>
 
 			<div class="slidecontainer">
-			  <input type="range" min="1" max="100" value="50" class="slider" light-id="3">
-			  <span class="value-slider"></span>
+				<input type="range" min="1" max="100" value="50" class="slider" light-id="3">
+				<span class="value-slider"></span>
 			</div>
 		</div>
 
 		<div class="inferface-item card">
 			<span class="interface-title">Lampe Lit</span>
-			<input type="checkbox" id="cbx2" class="cbx" style="display:none" value="4"/>
+			<input type="checkbox" id="cbx2" class="cbx" style="display:none" light-id="4"/>
 			<label for="cbx2" class="toggle"><span></span></label>
 			<div class="slidecontainer">
-			  <input type="range" min="1" max="100" value="50" class="slider" light-id="4">
-			  <span class="value-slider"></span>
+				<input type="range" min="1" max="100" value="50" class="slider" light-id="4">
+				<span class="value-slider"></span>
 			</div>
 		</div>
 
 		<div class="inferface-item card">
 			<span class="interface-title">Lampe Office</span>
-			<input type="checkbox" id="cbx3" class="cbx" style="display:none" value="5"/>
+			<input type="checkbox" id="cbx3" class="cbx" style="display:none" light-id="5"/>
 			<label for="cbx3" class="toggle"><span></span></label>
 			<div class="slidecontainer">
-			  <input type="range" min="1" max="100" value="50" class="slider" light-id="5">
-			  <span class="value-slider"></span>
+				<input type="range" min="1" max="100" value="50" class="slider" light-id="5">
+				<span class="value-slider"></span>
 			</div>
 		</div>
 
 		<div class="inferface-item card">
 			<span class="interface-title">Salon</span>
-			<input type="checkbox" id="cbx4" class="cbx" style="display:none" value="6"/>
+			<input type="checkbox" id="cbx4" class="cbx" style="display:none" light-id="6"/>
 			<label for="cbx4" class="toggle"><span></span></label>
 			<div class="slidecontainer">
-			  <input type="range" min="1" max="100" value="50" class="slider" light-id="6">
-			  <span class="value-slider"></span>
+				<input type="range" min="1" max="100" value="50" class="slider" light-id="6">
+				<span class="value-slider"></span>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<h2>Pièces et groupes</h2>
+		<div class="inferface-item card">
+			<span class="interface-title">Chambre</span>
+			<input type="checkbox" id="cbx5" class="cbx" style="display:none" group-id="8"/>
+			<label for="cbx5" class="toggle"><span></span></label>
+
+			<div class="slidecontainer">
+				<input type="range" min="1" max="100" value="50" class="slider" group-id="8">
+				<span class="value-slider"></span>
 			</div>
 		</div>
 	</div>
 	
 	<style type="text/css">
+		*{
+			box-sizing: border-box
+		}
 		.inferface-item{
 			margin: 20px 40px 40px;
 		}
@@ -127,41 +146,41 @@
 		}
 		/* Slider Bar */
 		.slidecontainer {
-		  width: 100%;
+			width: 100%;
 		}
 
 		.slider {
-		  -webkit-appearance: none;
-		  width: 200px;
-		  height: 10px;
-		  border-radius: 5px;
-		  background: #9A9999;
-		  outline: none;
-		  opacity: 0.6;
-		  -webkit-transition: .2s;
-		  transition: opacity .2s;
+			-webkit-appearance: none;
+			width: 200px;
+			height: 10px;
+			border-radius: 5px;
+			background: #9A9999;
+			outline: none;
+			opacity: 0.6;
+			-webkit-transition: .2s;
+			transition: opacity .2s;
 		}
 
 		.slider:hover {
-		  opacity: 0.8;
+			opacity: 0.8;
 		}
 
 		.slider::-webkit-slider-thumb {
-		  -webkit-appearance: none;
-		  appearance: none;
-		  width: 15px;
-		  height: 15px;
-		  border-radius: 50%;
-		  background: rgb(79, 46, 220);
-		  cursor: pointer;
+			-webkit-appearance: none;
+			appearance: none;
+			width: 15px;
+			height: 15px;
+			border-radius: 50%;
+			background: rgb(79, 46, 220);
+			cursor: pointer;
 		}
 
 		.slider::-moz-range-thumb {
-		  width: 25px;
-		  height: 25px;
-		  border-radius: 50%;
-		  background: rgb(79, 46, 220);
-		  cursor: pointer;
+			width: 25px;
+			height: 25px;
+			border-radius: 50%;
+			background: rgb(79, 46, 220);
+			cursor: pointer;
 		}
 		.interface-title{
 			display: block;
@@ -175,9 +194,14 @@
 		.row{
 			margin: 200px;
 		}
+		.row:after {
+			content: ""; /* Important, sinon l'élément n'est pas généré. */
+			display: table;
+			clear: both;
+		}
 		.row h2{
 			font-style: italic;
-    		font-family: monospace;
+				font-family: monospace;
 		}
 	</style>
 	<script src="config.js"></script>
