@@ -11,29 +11,28 @@ cbx = document.getElementsByClassName("cbx");
 sliders = document.getElementsByClassName("slider");
 values_sliders = document.getElementsByClassName('value-slider');
 
+function updateLightsState(){
+	var xhr = new XMLHttpRequest();
+	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/lights/";
+	xhr.open("GET", url, true);
+	xhr.send();
+	xhr.onload = function(){
+		if(xhr.status == 200){
+			data = JSON.parse(xhr.response);
 
+			for(var index in data){
+				if(data[index].state.on){
+					cbx[index-3].checked = true;
+				}
+				document.getElementsByClassName("inferface-item")[index-3].getElementsByTagName("span")[0].innerText = data[index].name
+				val= parseInt(data[index].state.bri * 100 / 254);
+				sliders[index-3].value = val;
+				values_sliders[index-3].innerText = val;
 
-
-var xhr = new XMLHttpRequest();
-var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/lights/";
-xhr.open("GET", url, true);
-xhr.send();
-xhr.onload = function(){
-	if(xhr.status == 200){
-		data = JSON.parse(xhr.response);
-
-		for(var index in data){
-			if(data[index].state.on){
-				cbx[index-3].checked = true;
 			}
-			document.getElementsByClassName("inferface-item")[index-3].getElementsByTagName("span")[0].innerText = data[index].name
-			val= parseInt(data[index].state.bri * 100 / 254);
-			sliders[index-3].value = val;
-			values_sliders[index-3].innerText = val;
-
 		}
+		
 	}
-	
 }
 
 for(i=0;i<cbx.length;i++){
@@ -67,3 +66,5 @@ for (var i = sliders.length - 1; i >= 0; i--) {
 	}
 
 }
+
+setInterval(function(){ updateLightsState(); }, 5000);
