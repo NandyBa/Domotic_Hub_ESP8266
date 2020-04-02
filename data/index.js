@@ -1,16 +1,18 @@
 
 function ChangePhilipsHueState(data, light_id){
-	var json = JSON.stringify(data);
-	var xhr = new XMLHttpRequest();
-	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/lights/"+light_id+"/state";
-	xhr.open("PUT", url, true);
-	xhr.send(json);
+	let location = "/lights/"+light_id+"/state";
+	ChangeState(data, location);
 }
 
 function ChangePhilipsHueGroupsState(data, group_id){
+	let location = "groups/"+group_id+"/action";
+	ChangeState(data, location);
+}
+
+function ChangeState(data, location){
 	var json = JSON.stringify(data);
 	var xhr = new XMLHttpRequest();
-	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/groups/"+group_id+"/action";
+	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/"+location;
 	xhr.open("PUT", url, true);
 	xhr.send(json);
 }
