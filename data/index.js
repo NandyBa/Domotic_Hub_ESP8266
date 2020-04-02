@@ -15,74 +15,118 @@ function ChangePhilipsHueGroupsState(data, group_id){
 	xhr.send(json);
 }
 
+row = document.getElementsByClassName('row');
 
-cbx = document.getElementsByClassName("cbx");
-sliders = document.getElementsByClassName("slider");
-values_sliders = document.getElementsByClassName('value-slider');
-
-function updateLightsState(){
+function updateLightsState(T = false){
 	var xhr = new XMLHttpRequest();
-	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/lights/";
+	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername;
 	xhr.open("GET", url, true);
 	xhr.send();
 	xhr.onload = function(){
 		if(xhr.status == 200){
 			data = JSON.parse(xhr.response);
 
-			for(var index in data){
-				if(data[index].state.on){
-					cbx[index-3].checked = true;
-				}else{
-					cbx[index-3].checked = false;
+			for(var id in data.lights){
+				if(T){
+					row[0].innerHTML += '<div class="inferface-item card" light-id="'+id+'"><span class="interface-title"></span><input type="checkbox" id="cbx1" class="cbx" style="display:none"/><label for="cbx1" class="toggle"><span></span></label><div class="slidecontainer">  <input type="range" min="1" max="100" value="50" class="slider">  <span class="value-slider"></span></div></div>';
 				}
-				document.getElementsByClassName("inferface-item")[index-3].getElementsByTagName("span")[0].innerText = data[index].name
-				val= parseInt(data[index].state.bri * 100 / 254);
-				sliders[index-3].value = val;
-				values_sliders[index-3].innerText = val;
+				that = document.querySelector('[light-id="'+id+'"]');
+				if(data.lights[id].state.on){
+					that.getElementsByClassName("cbx")[0].checked = true;
+				}else{
+					that.getElementsByClassName("cbx")[0].checked = false;
+				}
+				if(T){
+					that.getElementsByTagName("span")[0].innerText = data.lights[id].name
+				}
+				val= parseInt(data.lights[id].state.bri * 100 / 254);
+				that.getElementsByClassName("slider")[0].value = val;
+				that.getElementsByClassName('value-slider')[0].innerText = val;
+			}
+			for(var id in data.groups){
 
+				if(T){
+					row[1].innerHTML += '<div class="inferface-item card" group-id="'+id+'"><span class="interface-title"></span><input type="checkbox" class="cbx" style="display:none"/><label class="toggle"><span></span></label><div class="slidecontainer"><input type="range" min="1" max="100" value="50" class="slider"><span class="value-slider"></span></div></div>';
+				}
+				that = document.querySelector('[group-id="'+id+'"]');
+				if(data.groups[id].state.all_on){
+					that.getElementsByClassName("cbx")[0].checked = true;
+				}else{
+					that.getElementsByClassName("cbx")[0].checked = false;
+				}
+				if(T){
+					that.getElementsByTagName("span")[0].innerText = data.groups[id].name
+				}
+				val= parseInt(data.groups[id].action.bri * 100 / 254);
+				that.getElementsByClassName("slider")[0].value = val;
+				that.getElementsByClassName('value-slider')[0].innerText = val;
+			}
+			if(T){
+				addEventListenerOnCheckBoxesAndSliders();
 			}
 		}
-		
-	}
-}
-
-for(i=0;i<cbx.length;i++){
-	cbx[i].onclick = function() {
-		var data = {};
-		if(this.checked){
-			//On donne comme consigne d'allumer la lampe / la pièce
-			data.on = true;
-		}else{
-			//On donne comme consigne d'éteindre la lampe / la pièce
-			data.on = false;
-		}
-		if(this.getAttribute("light-id") != null){
-			light_id = this.getAttribute("light-id");		
-			ChangePhilipsHueState(data, light_id);
-		}else if(this.getAttribute("group-id")!= null){
-			group_id = this.getAttribute("group-id");
-			ChangePhilipsHueGroupsState(data, group_id);
-		}
-		
 	}
 	
 }
 
-for (var i = sliders.length - 1; i >= 0; i--) {
-	sliders[i].onchange = function(){
-		slider = this;
-		val = slider.value;
-		light_id = slider.getAttribute("light-id");
-		values_sliders[light_id-3].innerText = val;
+updateLightsState(true);
 
-		var data = {};
-		data.on = true;
-		data.bri	= parseInt(254* parseInt(val)/100);
+cbx = document.getElementsByClassName("cbx");
+sliders = document.getElementsByClassName("slider");
+values_sliders = document.getElementsByClassName('value-slider');
 
-		ChangePhilipsHueState(data, light_id);
-		cbx[light_id-3].checked = true;
+function addEventListenerOnCheckBoxesAndSliders(){
+	$labels = document.getElementsByTagName('label');
+	for (var i = 0; i < $labels.length; i++) {
+		$labels[i].onclick = function() {
+			$card = this.parentElement;
+			$cbx = $card.getElementsByClassName('cbx')[0];
+			var data = {};
+			if(!$cbx.checked){
+				//On donne comme consigne d'allumer la lampe / la pièce
+				data.on = true;
+			}else{
+				//On donne comme consigne d'éteindre la lampe / la pièce
+				data.on = false;
+			}
+			if($card.getAttribute("light-id") != null){
+				light_id = $card.getAttribute("light-id");		
+				ChangePhilipsHueState(data, light_id);
+			}else{
+				group_id = $card.getAttribute("group-id");
+				ChangePhilipsHueGroupsState(data, group_id);
+			}
+			
+		}
 	}
+	$sliders = document.getElementsByClassName("slider");
+	for (var i = $sliders.length - 1; i >= 0; i--) {
+		$sliders[i].onchange = function(){
+			$card = this.parentElement.parentElement;
+			$cbx = $card.getElementsByClassName('cbx')[0]
+			val = this.value;
+			$card.getElementsByClassName('value-slider')[0].innerText = val;
 
+			var data = {};
+			data.on = true;
+			data.bri = parseInt(254* parseInt(val)/100);
+
+			if($card.getAttribute("light-id") != null){
+				light_id = $card.getAttribute("light-id");		
+				ChangePhilipsHueState(data, light_id);
+			}else{
+				group_id = $card.getAttribute("group-id");
+				ChangePhilipsHueGroupsState(data, group_id);
+			}
+
+			$card.getElementsByClassName('cbx')[0]
+			$cbx.checked = true;
+		}
+
+	}
 }
+	
+
+
 
 setInterval(function(){ updateLightsState(); }, 5000);
