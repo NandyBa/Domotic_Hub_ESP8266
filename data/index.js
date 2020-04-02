@@ -18,47 +18,67 @@ function ChangePhilipsHueGroupsState(data, group_id){
 row = document.getElementsByClassName('row');
 
 function updateStates(T = false){
+	updateLightStates(T);
+	updateGroupsLightStates(T);
+	if(T){
+		addEventListenerOnCheckBoxesAndSliders();
+	}
+}
+
+function updateLightStates(T = false){
 	var xhr = new XMLHttpRequest();
-	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername;
+	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/lights";
 	xhr.open("GET", url, true);
 	xhr.send();
 	xhr.onload = function(){
 		if(xhr.status == 200){
 			data = JSON.parse(xhr.response);
 
-			for(var id in data.lights){
+			for(var id in data){
 				if(T){
 					row[0].innerHTML += '<div class="inferface-item card" light-id="'+id+'"><span class="interface-title"></span><input type="checkbox" id="cbx1" class="cbx" style="display:none"/><label for="cbx1" class="toggle"><span></span></label><div class="slidecontainer">  <input type="range" min="1" max="100" value="50" class="slider">  <span class="value-slider"></span></div></div>';
 				}
 				that = document.querySelector('[light-id="'+id+'"]');
-				if(data.lights[id].state.on){
+				if(data[id].state.on){
 					that.getElementsByClassName("cbx")[0].checked = true;
 				}else{
 					that.getElementsByClassName("cbx")[0].checked = false;
 				}
 				if(T){
-					that.getElementsByTagName("span")[0].innerText = data.lights[id].name
+					that.getElementsByTagName("span")[0].innerText = data[id].name
 				}
-				val= parseInt(data.lights[id].state.bri * 100 / 254);
+				val= parseInt(data[id].state.bri * 100 / 254);
 				that.getElementsByClassName("slider")[0].value = val;
 				that.getElementsByClassName('value-slider')[0].innerText = val;
 			}
-		
-			for(var id in data.groups){
+		}
+	}
+}
+
+function updateGroupsLightStates(T = false){
+	var xhr = new XMLHttpRequest();
+	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/groups";
+	xhr.open("GET", url, true);
+	xhr.send();
+	xhr.onload = function(){
+		if(xhr.status == 200){
+			data = JSON.parse(xhr.response);
+
+			for(var id in data){
 
 				if(T){
 					row[1].innerHTML += '<div class="inferface-item card" group-id="'+id+'"><span class="interface-title"></span><input type="checkbox" class="cbx" style="display:none"/><label class="toggle"><span></span></label><div class="slidecontainer"><input type="range" min="1" max="100" value="50" class="slider"><span class="value-slider"></span></div></div>';
 				}
 				that = document.querySelector('[group-id="'+id+'"]');
-				if(data.groups[id].state.all_on){
+				if(data[id].state.all_on){
 					that.getElementsByClassName("cbx")[0].checked = true;
 				}else{
 					that.getElementsByClassName("cbx")[0].checked = false;
 				}
 				if(T){
-					that.getElementsByTagName("span")[0].innerText = data.groups[id].name
+					that.getElementsByTagName("span")[0].innerText = data[id].name
 				}
-				val= parseInt(data.groups[id].action.bri * 100 / 254);
+				val= parseInt(data[id].action.bri * 100 / 254);
 				that.getElementsByClassName("slider")[0].value = val;
 				that.getElementsByClassName('value-slider')[0].innerText = val;
 			}
@@ -69,6 +89,9 @@ function updateStates(T = false){
 	}
 	
 }
+
+
+
 
 updateStates(true);
 
