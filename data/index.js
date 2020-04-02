@@ -109,9 +109,11 @@ function addEventListenerOnCheckBoxesAndSliders(){
 			if(!$cbx.checked){
 				//On donne comme consigne d'allumer la lampe / la pièce
 				data.on = true;
+				$cbx.checked = true; //On coche directement la case, pour amener de la fluidité à l'interface graphique
 			}else{
 				//On donne comme consigne d'éteindre la lampe / la pièce
 				data.on = false;
+				$cbx.checked = false; //On décoche directement la case, pour amener de la fluidité à l'interface graphique
 			}
 			if($card.getAttribute("light-id") != null){
 				light_id = $card.getAttribute("light-id");		
@@ -136,15 +138,16 @@ function addEventListenerOnCheckBoxesAndSliders(){
 			data.bri = parseInt(254* parseInt(val)/100);
 
 			if($card.getAttribute("light-id") != null){
+				$cbx.checked = true;
 				light_id = $card.getAttribute("light-id");		
 				ChangePhilipsHueState(data, light_id);
 			}else{
+				$cbx.checked = true;
 				group_id = $card.getAttribute("group-id");
 				ChangePhilipsHueGroupsState(data, group_id);
 			}
 
 			$card.getElementsByClassName('cbx')[0]
-			$cbx.checked = true;
 		}
 
 	}
