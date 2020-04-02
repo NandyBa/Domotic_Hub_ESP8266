@@ -1,3 +1,4 @@
+const URI = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername;
 
 function ChangePhilipsHueState(data, light_id){
 	let location = "/lights/"+light_id+"/state";
@@ -12,7 +13,7 @@ function ChangePhilipsHueGroupsState(data, group_id){
 function ChangeState(data, location){
 	var json = JSON.stringify(data);
 	var xhr = new XMLHttpRequest();
-	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/"+location;
+	var url = URI +"/"+location;
 	xhr.open("PUT", url, true);
 	xhr.send(json);
 }
@@ -85,7 +86,7 @@ function updateGroupsLightStates(First_update = false){
 function PhilipsHueHttpRequest(location){
 	return new Promise((resolve, reject) => {
 		let xhr = new XMLHttpRequest();
-		let url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/"+location;
+		let url = URI +"/"+location;
 		xhr.open("GET", url, true);
 		xhr.send();
 		xhr.onload = () => {
