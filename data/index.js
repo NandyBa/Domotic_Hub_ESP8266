@@ -17,7 +17,7 @@ function ChangePhilipsHueGroupsState(data, group_id){
 
 row = document.getElementsByClassName('row');
 
-function updateLightsState(T = false){
+function updateStates(T = false){
 	var xhr = new XMLHttpRequest();
 	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername;
 	xhr.open("GET", url, true);
@@ -43,6 +43,7 @@ function updateLightsState(T = false){
 				that.getElementsByClassName("slider")[0].value = val;
 				that.getElementsByClassName('value-slider')[0].innerText = val;
 			}
+		
 			for(var id in data.groups){
 
 				if(T){
@@ -69,7 +70,7 @@ function updateLightsState(T = false){
 	
 }
 
-updateLightsState(true);
+updateStates(true);
 
 cbx = document.getElementsByClassName("cbx");
 sliders = document.getElementsByClassName("slider");
@@ -129,4 +130,4 @@ function addEventListenerOnCheckBoxesAndSliders(){
 
 
 
-setInterval(function(){ updateLightsState(); }, 5000);
+setInterval(function(){ updateStates(); }, 5000);
