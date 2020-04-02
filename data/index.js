@@ -1,7 +1,7 @@
 const URI = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername;
 
 function ChangePhilipsHueState(data, light_id){
-	let location = "/lights/"+light_id+"/state";
+	let location = "lights/"+light_id+"/state";
 	ChangeState(data, location);
 }
 
