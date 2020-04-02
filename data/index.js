@@ -19,20 +19,20 @@ function ChangeState(data, location){
 
 row = document.getElementsByClassName('row');
 
-function updateStates(T = false){
-	updateLightStates(T);
-	updateGroupsLightStates(T);
-	if(T){
+function updateStates(First_update = false){
+	updateLightStates(First_update);
+	updateGroupsLightStates(First_update);
+	if(First_update){
 		addEventListenerOnCheckBoxesAndSliders();
 	}
 }
 
-function updateLightStates(T = false){
+function updateLightStates(First_update = false){
 
 	PhilipsHueHttpRequest('lights').then(data => {
 
 		for(var id in data){
-			if(T){
+			if(First_update){
 				row[0].innerHTML += '<div class="inferface-item card" light-id="'+id+'"><span class="interface-title"></span><input type="checkbox" id="cbx1" class="cbx" style="display:none"/><label for="cbx1" class="toggle"><span></span></label><div class="slidecontainer">  <input type="range" min="1" max="100" value="50" class="slider">  <span class="value-slider"></span></div></div>';
 			}
 			that = document.querySelector('[light-id="'+id+'"]');
@@ -41,7 +41,7 @@ function updateLightStates(T = false){
 			}else{
 				that.getElementsByClassName("cbx")[0].checked = false;
 			}
-			if(T){
+			if(First_update){
 				that.getElementsByTagName("span")[0].innerText = data[id].name
 			}
 			val= parseInt(data[id].state.bri * 100 / 254);
@@ -52,13 +52,13 @@ function updateLightStates(T = false){
 }
 
 
-function updateGroupsLightStates(T = false){
+function updateGroupsLightStates(First_update = false){
 
 	PhilipsHueHttpRequest('groups').then(data => {
 
 		for(var id in data){
 
-			if(T){
+			if(First_update){
 				row[1].innerHTML += '<div class="inferface-item card" group-id="'+id+'"><span class="interface-title"></span><input type="checkbox" class="cbx" style="display:none"/><label class="toggle"><span></span></label><div class="slidecontainer"><input type="range" min="1" max="100" value="50" class="slider"><span class="value-slider"></span></div></div>';
 			}
 			that = document.querySelector('[group-id="'+id+'"]');
@@ -67,14 +67,14 @@ function updateGroupsLightStates(T = false){
 			}else{
 				that.getElementsByClassName("cbx")[0].checked = false;
 			}
-			if(T){
+			if(First_update){
 				that.getElementsByTagName("span")[0].innerText = data[id].name
 			}
 			val= parseInt(data[id].action.bri * 100 / 254);
 			that.getElementsByClassName("slider")[0].value = val;
 			that.getElementsByClassName('value-slider')[0].innerText = val;
 		}
-		if(T){
+		if(First_update){
 			addEventListenerOnCheckBoxesAndSliders();
 		}
 	});
