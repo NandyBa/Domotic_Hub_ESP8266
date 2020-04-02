@@ -26,71 +26,74 @@ function updateStates(T = false){
 }
 
 function updateLightStates(T = false){
-	var xhr = new XMLHttpRequest();
-	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/lights";
-	xhr.open("GET", url, true);
-	xhr.send();
-	xhr.onload = function(){
-		if(xhr.status == 200){
-			data = JSON.parse(xhr.response);
 
-			for(var id in data){
-				if(T){
-					row[0].innerHTML += '<div class="inferface-item card" light-id="'+id+'"><span class="interface-title"></span><input type="checkbox" id="cbx1" class="cbx" style="display:none"/><label for="cbx1" class="toggle"><span></span></label><div class="slidecontainer">  <input type="range" min="1" max="100" value="50" class="slider">  <span class="value-slider"></span></div></div>';
-				}
-				that = document.querySelector('[light-id="'+id+'"]');
-				if(data[id].state.on){
-					that.getElementsByClassName("cbx")[0].checked = true;
-				}else{
-					that.getElementsByClassName("cbx")[0].checked = false;
-				}
-				if(T){
-					that.getElementsByTagName("span")[0].innerText = data[id].name
-				}
-				val= parseInt(data[id].state.bri * 100 / 254);
-				that.getElementsByClassName("slider")[0].value = val;
-				that.getElementsByClassName('value-slider')[0].innerText = val;
+	PhilipsHueHttpRequest('lights').then(data => {
+
+		for(var id in data){
+			if(T){
+				row[0].innerHTML += '<div class="inferface-item card" light-id="'+id+'"><span class="interface-title"></span><input type="checkbox" id="cbx1" class="cbx" style="display:none"/><label for="cbx1" class="toggle"><span></span></label><div class="slidecontainer">  <input type="range" min="1" max="100" value="50" class="slider">  <span class="value-slider"></span></div></div>';
 			}
-		}
-	}
-}
-
-function updateGroupsLightStates(T = false){
-	var xhr = new XMLHttpRequest();
-	var url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/groups";
-	xhr.open("GET", url, true);
-	xhr.send();
-	xhr.onload = function(){
-		if(xhr.status == 200){
-			data = JSON.parse(xhr.response);
-
-			for(var id in data){
-
-				if(T){
-					row[1].innerHTML += '<div class="inferface-item card" group-id="'+id+'"><span class="interface-title"></span><input type="checkbox" class="cbx" style="display:none"/><label class="toggle"><span></span></label><div class="slidecontainer"><input type="range" min="1" max="100" value="50" class="slider"><span class="value-slider"></span></div></div>';
-				}
-				that = document.querySelector('[group-id="'+id+'"]');
-				if(data[id].state.all_on){
-					that.getElementsByClassName("cbx")[0].checked = true;
-				}else{
-					that.getElementsByClassName("cbx")[0].checked = false;
-				}
-				if(T){
-					that.getElementsByTagName("span")[0].innerText = data[id].name
-				}
-				val= parseInt(data[id].action.bri * 100 / 254);
-				that.getElementsByClassName("slider")[0].value = val;
-				that.getElementsByClassName('value-slider')[0].innerText = val;
+			that = document.querySelector('[light-id="'+id+'"]');
+			if(data[id].state.on){
+				that.getElementsByClassName("cbx")[0].checked = true;
+			}else{
+				that.getElementsByClassName("cbx")[0].checked = false;
 			}
 			if(T){
-				addEventListenerOnCheckBoxesAndSliders();
+				that.getElementsByTagName("span")[0].innerText = data[id].name
 			}
+			val= parseInt(data[id].state.bri * 100 / 254);
+			that.getElementsByClassName("slider")[0].value = val;
+			that.getElementsByClassName('value-slider')[0].innerText = val;
 		}
-	}
+	});
+}
+
+
+function updateGroupsLightStates(T = false){
+
+	PhilipsHueHttpRequest('groups').then(data => {
+
+		for(var id in data){
+
+			if(T){
+				row[1].innerHTML += '<div class="inferface-item card" group-id="'+id+'"><span class="interface-title"></span><input type="checkbox" class="cbx" style="display:none"/><label class="toggle"><span></span></label><div class="slidecontainer"><input type="range" min="1" max="100" value="50" class="slider"><span class="value-slider"></span></div></div>';
+			}
+			that = document.querySelector('[group-id="'+id+'"]');
+			if(data[id].state.all_on){
+				that.getElementsByClassName("cbx")[0].checked = true;
+			}else{
+				that.getElementsByClassName("cbx")[0].checked = false;
+			}
+			if(T){
+				that.getElementsByTagName("span")[0].innerText = data[id].name
+			}
+			val= parseInt(data[id].action.bri * 100 / 254);
+			that.getElementsByClassName("slider")[0].value = val;
+			that.getElementsByClassName('value-slider')[0].innerText = val;
+		}
+		if(T){
+			addEventListenerOnCheckBoxesAndSliders();
+		}
+	});
+
 	
 }
 
-
+function PhilipsHueHttpRequest(location){
+	return new Promise((resolve, reject) => {
+		let xhr = new XMLHttpRequest();
+		let url = "http://"+globalConfig.PhilipsHubIp+"/api/"+globalConfig.PhilipsUsername+"/"+location;
+		xhr.open("GET", url, true);
+		xhr.send();
+		xhr.onload = () => {
+			if(xhr.status == 200){
+				data = JSON.parse(xhr.response);
+				resolve(data);
+			}
+		}
+	});
+}
 
 
 updateStates(true);
