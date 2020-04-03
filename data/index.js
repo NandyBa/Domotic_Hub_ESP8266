@@ -34,7 +34,7 @@ function updateLightStates(First_update = false){
 
 		for(var id in data){
 			if(First_update){
-				row[0].innerHTML += '<div class="inferface-item card" light-id="'+id+'"><span class="interface-title"></span><input type="checkbox" id="cbx1" class="cbx" style="display:none"/><label for="cbx1" class="toggle"><span></span></label><div class="slidecontainer">  <input type="range" min="1" max="100" value="50" class="slider">  <span class="value-slider"></span></div></div>';
+				row[0].innerHTML += '<div class="inferface-item card" light-id="'+id+'"><span class="interface-title"></span><input type="checkbox" id="cbx1" class="cbx" style="display:none"/><label for="cbx1" class="toggle"><span></span></label><div class="slidecontainer">  <input type="range" min="1" max="100" value="50" class="slider">  <span class="value-slider"></span></div><div class="color-piker"><button value="41278;0"><button value="6042;206"></button><button value="47104;254"></button><button value="0;254"></button></div></div>';
 			}
 			that = document.querySelector('[light-id="'+id+'"]');
 			if(data[id].state.on){
@@ -60,7 +60,7 @@ function updateGroupsLightStates(First_update = false){
 		for(var id in data){
 
 			if(First_update){
-				row[1].innerHTML += '<div class="inferface-item card" group-id="'+id+'"><span class="interface-title"></span><input type="checkbox" class="cbx" style="display:none"/><label class="toggle"><span></span></label><div class="slidecontainer"><input type="range" min="1" max="100" value="50" class="slider"><span class="value-slider"></span></div></div>';
+				row[1].innerHTML += '<div class="inferface-item card" group-id="'+id+'"><span class="interface-title"></span><input type="checkbox" class="cbx" style="display:none"/><label class="toggle"><span></span></label><div class="slidecontainer"><input type="range" min="1" max="100" value="50" class="slider"><span class="value-slider"></span></div><div class="color-piker"><button value="41278;0"><button value="6042;206"></button><button value="47104;254"></button><button value="0;254"></button></div></div>';
 			}
 			that = document.querySelector('[group-id="'+id+'"]');
 			if(data[id].state.all_on){
@@ -154,6 +154,31 @@ function addEventListenerOnCheckBoxesAndSliders(){
 			}
 
 			$card.getElementsByClassName('cbx')[0]
+		}
+
+	}
+	$color_button = document.getElementsByTagName('button');
+	for (var i = $color_button.length - 1; i >= 0; i--) {
+		$color_button[i].onclick = function(){
+			$card = this.parentElement.parentElement;
+			$cbx = $card.getElementsByClassName('cbx')[0]
+			vals = this.value.split(';');
+
+			var data = {};
+			data.on = true;
+			data.hue = parseInt(vals[0]);
+			data.sat = parseInt(vals[1]);
+
+
+			if($card.getAttribute("light-id") != null){
+				$cbx.checked = true;
+				light_id = $card.getAttribute("light-id");		
+				ChangePhilipsHueState(data, light_id);
+			}else{
+				$cbx.checked = true;
+				group_id = $card.getAttribute("group-id");
+				ChangePhilipsHueGroupsState(data, group_id);
+			}
 		}
 
 	}
